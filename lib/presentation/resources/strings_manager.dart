@@ -1,0 +1,81 @@
+class AppStrings {
+  static const String noRouteFound = "no_route_found";
+  static const String onBoardingText = "on_boarding_text";
+  static const String getStarted = "get_started";
+  static const String enterPhoneNumber = "enter_phone_number";
+  static const String phoneNumber = "phone_number";
+  static const String sendVerificationCode = "send_cerification_code";
+  static const String verification = "verification";
+  static const String verificationMessage = "verification_message";
+  static const String didReceiveACode = "did_receive_a_code";
+  static const String resend = "resend";
+  static const String loading = "loading";
+  static const String anErrorOccurred = "an_error_occurred";
+  static const String ok = "ok";
+  static const String retryAgain = "retry_again";
+  static const String nothingToShow = "nothing_to_show";
+  static const String success = "success";
+  static const String verificationFailed = "verification_failed";
+  static const String completeRegistration = "complete_registration";
+  static const String uploadAPicture = "upload_a_picture";
+  static const String nickName = "nickname";
+  static const String userName = "username";
+  static const String bio = "bio";
+  static const String howAreYouCalled = "how_are_you_called";
+  static const String yourUsername = "your_username";
+  static const String tellPeopleAboutYou = "tell_people_about_you";
+  static const String uploadYourData = "upload_your_data";
+  static const String fromGallery = "from_gallery";
+  static const String fromCamera = "from_camera";
+  static const String thisFieldIsRequired = "this_field_is_required";
+  static const String userNameCantContainSpaces =
+      "username_cant_contain_spaces";
+  static const String appTitle = "app_title";
+  static const String messages = "messages";
+  static const String groups = "groups";
+  static const String noChatFound = "no_chat_found";
+  static const String createNewGroup = "create_new_group";
+  static const String typeHere = "type_here";
+  static const String online = "online";
+  static const String lastSeen = "last_seen";
+  static const String undetermined = "undetermined";
+  static const String searchByUsername = "search_by_username";
+  static const String thereNoMessage = "there_no_message";
+  static const String yesterday = "yesterday";
+  static const String resendMessage = "resend_message";
+  static const String groupName = "group_name";
+  static const String selectMembers = "select_members";
+  static const String atLeast3Users = "at_least_3_users";
+  static const String settings = "settings";
+  static const String userInfo = "user_info";
+  static const String groupInfo = "group_info";
+  static const String members = "members";
+  static const String updatedSuccessfully = "updated_successfully";
+  static const String exitGroup = "exit_group";
+  static const String updateGroupData = "update_group_data";
+  static const String addNewMembers = "add_new_members";
+  static const String personalInfo = "personal_info";
+  static const String changeAppLanguage = "change_app_language";
+  static const String logOut = "logout";
+
+  // Calling Database messages
+  static const String connectionError = "connection_error";
+  static const String wrongCode = "wrong_code";
+  static const String userIsExists = "user_is_exists";
+  static const String noUserFound = "no_user_found";
+  static const String errorWhileUploadingImage = "error_while_uploading_image";
+
+  // vlaue that dependes on userLang
+  static const String notificationChatBodyEN = "sent you a message";
+  static const String notificationChatBodyAR = "ارسل لك رسالة";
+  static const String notificationGroupBodyEN = "sent a message in group : ";
+  static const String notificationGroupBodyAR = "ارسل رسالة في المجموعة :";
+  static const String newGroupNotificationTitleEN = "You Were added to a group";
+  static const String newGroupNotificationTitleAR = " تم اضافتك الى مجموعة جديدة";
+  static const String newGroupNotificationBodyEN = "اضافك الى المجموعة :";
+  static const String newGroupNotificationBodyAR = "Added you to group : ";
+  static const String notificationTitleEN = "You have new message";
+  static const String notificationTitleAR = "لديك رسالة جديدة";
+  static const String onlineEn = "online";
+  static const String onlineAr = "متصل";
+}
