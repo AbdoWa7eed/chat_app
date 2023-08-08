@@ -1,6 +1,14 @@
 # chat_app
-
-A new Flutter project.
+Using : 
+- Flutter framework
+- Bloc state management
+- Clean Architecture Pattern
+- Localization (Arabic - English)
+Firebase : 
+- OTP (Phone) authentication
+- Firestore
+- Storage
+- FCM Rest APIs
 
 ## Getting Started
 
