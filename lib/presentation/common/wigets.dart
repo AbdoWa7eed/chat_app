@@ -7,7 +7,6 @@ import 'package:chat_app/presentation/resources/values_manager.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
 Widget getDialogWidget(BuildContext context,
@@ -84,84 +83,82 @@ Widget appBarLeading({required Function() onPressed}) {
 }
 
 showPicker(BuildContext context, ChatAppCubit cubit) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-            child: Container(
-          color: ColorManager.backgroundColor,
-          child: Wrap(
-            children: [
-              ListTile(
-                trailing:
-                    const Icon(Icons.arrow_forward_ios, size: AppSize.s18),
-                leading: const Icon(Icons.camera),
-                title: const Text(AppStrings.fromGallery).tr(),
-                onTap: () {
-                  cubit.imageFromGallery();
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                trailing:
-                    const Icon(Icons.arrow_forward_ios, size: AppSize.s18),
-                leading: const Icon(Icons.camera_alt_outlined),
-                title: const Text(AppStrings.fromCamera).tr(),
-                onTap: () {
-                  cubit.imageFromCamera();
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        ));
-      },
-    );
-  }
-
-  Widget getUsersListWidget(ChatAppCubit cubit) { 
-    return Expanded(
-      child: ListView.separated(
-          shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
-          itemBuilder: (context, index) {
-              return _getUserItem(context ,cubit.users[index], cubit, index);
-          },
-          separatorBuilder: (context, index) =>
-              const SizedBox(height: AppSize.s6),
-          itemCount: cubit.users.length),
-    );
+  showModalBottomSheet(
+    context: context,
+    builder: (context) {
+      return SafeArea(
+          child: Container(
+        color: ColorManager.backgroundColor,
+        child: Wrap(
+          children: [
+            ListTile(
+              trailing: const Icon(Icons.arrow_forward_ios, size: AppSize.s18),
+              leading: const Icon(Icons.camera),
+              title: const Text(AppStrings.fromGallery).tr(),
+              onTap: () {
+                cubit.imageFromGallery();
+                Navigator.of(context).pop();
+              },
+            ),
+            ListTile(
+              trailing: const Icon(Icons.arrow_forward_ios, size: AppSize.s18),
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text(AppStrings.fromCamera).tr(),
+              onTap: () {
+                cubit.imageFromCamera();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      ));
+    },
+  );
 }
 
-  Widget _getUserItem(context , UserModel user, ChatAppCubit cubit, int index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppPadding.p12, vertical: AppPadding.p8),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: AppSize.s25,
-            backgroundImage: NetworkImage(user.imageLink),
-            backgroundColor: ColorManager.darkGray,
+Widget getUsersListWidget(ChatAppCubit cubit) {
+  return Expanded(
+    child: ListView.separated(
+        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          return _getUserItem(context, cubit.users[index], cubit, index);
+        },
+        separatorBuilder: (context, index) =>
+            const SizedBox(height: AppSize.s6),
+        itemCount: cubit.users.length),
+  );
+}
+
+Widget _getUserItem(context, UserModel user, ChatAppCubit cubit, int index) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(
+        horizontal: AppPadding.p12, vertical: AppPadding.p8),
+    child: Row(
+      children: [
+        CircleAvatar(
+          radius: AppSize.s25,
+          backgroundImage: NetworkImage(user.imageLink),
+          backgroundColor: ColorManager.darkGray,
+        ),
+        const SizedBox(
+          width: AppSize.s10,
+        ),
+        Expanded(
+          child: Text(
+            user.nickName,
+            maxLines: AppConstants.minLines,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-          const SizedBox(
-            width: AppSize.s10,
-          ),
-          Expanded(
-            child: Text(
-              user.nickName,
-              maxLines: AppConstants.minLines,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          Checkbox(
-            value: cubit.checkedUsers[index] ?? false,
-            onChanged: (value) {
-              cubit.addCheckedStateToMap(index, value);
-            },
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        Checkbox(
+          value: cubit.checkedUsers[index] ?? false,
+          onChanged: (value) {
+            cubit.addCheckedStateToMap(index, value);
+          },
+        ),
+      ],
+    ),
+  );
+}

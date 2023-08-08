@@ -1,3 +1,5 @@
+// ignore_for_file: void_checks
+
 import 'dart:io';
 import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/data/data_source/home/home_data_source.dart';
@@ -124,7 +126,6 @@ class HomeRepositoryImpl implements HomeRepository {
         await _homeDataSource.createNewGroup(groupModel.toGroupChatRequest());
         return const Right(Constants.zero);
       } catch (error) {
-        print(error.toString());
         return Left(Failure(error.toString()));
       }
     } else {
@@ -193,9 +194,9 @@ class HomeRepositoryImpl implements HomeRepository {
       return Left(Failure(AppStrings.connectionError.tr()));
     }
   }
-  
+
   @override
-  Future<Either<Failure, void>> setDeviceToken(String token) async{
+  Future<Either<Failure, void>> setDeviceToken(String token) async {
     if (await _networkInfo.isConnected) {
       try {
         await _homeDataSource.setDeviceToken(token);
@@ -207,9 +208,9 @@ class HomeRepositoryImpl implements HomeRepository {
       return Left(Failure(AppStrings.connectionError.tr()));
     }
   }
-  
+
   @override
-  Future<Either<Failure, void>> setUserDeviceLanguage(String lang) async{
+  Future<Either<Failure, void>> setUserDeviceLanguage(String lang) async {
     if (await _networkInfo.isConnected) {
       try {
         await _homeDataSource.setUserDeviceLanguage(lang);

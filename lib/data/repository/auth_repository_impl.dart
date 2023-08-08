@@ -1,3 +1,5 @@
+// ignore_for_file: void_checks
+
 import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/data/data_source/auth/auth_data_srouce.dart';
 import 'package:chat_app/data/network/failure.dart';

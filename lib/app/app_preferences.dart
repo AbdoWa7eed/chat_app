@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:chat_app/app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,7 +63,7 @@ class AppPreferences {
   }
 
   Future<String> getAppLanguage() async {
-    String? language = await _sharedPreferences.getString(PREFS_KEY_LANG);
+    String? language = _sharedPreferences.getString(PREFS_KEY_LANG);
 
     if (language != null) {
       return language;

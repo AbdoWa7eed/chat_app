@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class UserAuthenticationRequest {
   String verificationId;
   String smsCode;

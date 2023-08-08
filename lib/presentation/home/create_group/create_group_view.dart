@@ -1,12 +1,10 @@
 import 'package:chat_app/app/di.dart';
 import 'package:chat_app/presentation/cubit/app_states.dart';
-import 'package:chat_app/presentation/resources/constants_manager.dart';
 import 'package:chat_app/presentation/resources/strings_manager.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/functions.dart';
-import '../../../domain/models/models.dart';
 import '../../common/wigets.dart';
 import '../../cubit/app_cubit.dart';
 import '../../resources/assets_manager.dart';
@@ -47,6 +45,7 @@ class _CreateGroupWidgetState extends State<CreateGroupWidget> {
                     if (value!.isEmpty) {
                       return AppStrings.thisFieldIsRequired.tr();
                     }
+                    return null;
                   },
                   decoration: InputDecoration(
                     labelText: AppStrings.groupName.tr(),
@@ -110,13 +109,12 @@ class _CreateGroupWidgetState extends State<CreateGroupWidget> {
           );
         },
       );
-    } else if(state is CreateGroupSuccessState){
+    } else if (state is CreateGroupSuccessState) {
       dismissDialog(context);
       Navigator.of(context).pop();
     }
   }
 
- 
   void _createGroupValidation(ChatAppCubit cubit) {
     if (_formKey.currentState!.validate()) {
       if (cubit.checkedUsers.isEmpty) {

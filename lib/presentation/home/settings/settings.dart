@@ -1,7 +1,6 @@
 import 'package:chat_app/app/app_preferences.dart';
 import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/app/di.dart';
-import 'package:chat_app/app/functions.dart';
 import 'package:chat_app/presentation/cubit/app_cubit.dart';
 import 'package:chat_app/presentation/cubit/app_states.dart';
 import 'package:chat_app/presentation/resources/color_manager.dart';

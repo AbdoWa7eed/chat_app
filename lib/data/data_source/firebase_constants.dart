@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 const USERS_COLLECTION_PATH = 'users';
 const CHATS_COLLECTION_PATH = 'chats';
 const MESSAGES_COLLECTION_PATH = 'messages';

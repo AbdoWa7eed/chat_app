@@ -10,7 +10,6 @@ import 'package:chat_app/presentation/resources/strings_manager.dart';
 import 'package:chat_app/presentation/splash/splash_view.dart';
 import 'package:chat_app/presentation/user_info/user_info.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Routes {

@@ -1,3 +1,5 @@
+// ignore_for_file: void_checks
+
 import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/data/data_source/group_chat/group_data_source.dart';
 import 'package:chat_app/data/mapper/mapper.dart';
@@ -17,7 +19,8 @@ class GroupChatRepoImpl implements GroupChatRepo {
 
   @override
   Future<Either<Failure, void>> sendGroupMessage(
-      {required MessageModel messageModel, required GroupChatModel groupModel}) async {
+      {required MessageModel messageModel,
+      required GroupChatModel groupModel}) async {
     if (await _networkInfo.isConnected) {
       try {
         await _groupChatDataSource.sendGroupMessage(
@@ -47,14 +50,15 @@ class GroupChatRepoImpl implements GroupChatRepo {
       return Left(Failure(AppStrings.connectionError.tr()));
     }
   }
-  
+
   @override
-  Future<Either<Failure , void>> setUnreadMessages(GroupChatModel group, {String? readerUser}) async {
-   if (await _networkInfo.isConnected) {
+  Future<Either<Failure, void>> setUnreadMessages(GroupChatModel group,
+      {String? readerUser}) async {
+    if (await _networkInfo.isConnected) {
       try {
-        var response = _groupChatDataSource.setUnreadMessages(group.toGroupChatRequest() , readerUser: readerUser);
+        _groupChatDataSource.setUnreadMessages(group.toGroupChatRequest(),
+            readerUser: readerUser);
         return const Right(Constants.zero);
-           
       } catch (error) {
         return Left(Failure(AppStrings.anErrorOccurred.tr()));
       }
@@ -62,5 +66,4 @@ class GroupChatRepoImpl implements GroupChatRepo {
       return Left(Failure(AppStrings.connectionError.tr()));
     }
   }
-  
 }

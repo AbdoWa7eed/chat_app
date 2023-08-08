@@ -353,7 +353,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
                 cubit.createUsersList();
                 showDialog(
                   context: context,
-                  builder: (context) => CreateGroupWidget(),
+                  builder: (context) => const CreateGroupWidget(),
                 );
               },
               child: Text(
@@ -396,12 +396,12 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
       cubit.createUsersList();
       showDialog(
         context: context,
-        builder: (context) => CreateGroupWidget(),
+        builder: (context) => const CreateGroupWidget(),
       );
     } else {
       showDialog(
         context: context,
-        builder: (context) => SettingsWidget(),
+        builder: (context) => const SettingsWidget(),
       );
     }
   }

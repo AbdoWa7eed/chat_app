@@ -46,13 +46,12 @@ class HomeDataSourceImpl implements HomeDataSource {
   @override
   Future<bool> addUserToFireStore(UserRequest user) async {
     bool isUsernameExists = false;
-    (await _fireStore.collection(USERS_COLLECTION_PATH).get())
-        .docs
-        .forEach((element) {
+    for (var element
+        in (await _fireStore.collection(USERS_COLLECTION_PATH).get()).docs) {
       if (element.data()[USERNAME_FIELD_PATH] == user.username) {
         isUsernameExists = true;
       }
-    });
+    }
 
     if (!isUsernameExists) {
       await _fireStore
@@ -163,7 +162,6 @@ class HomeDataSourceImpl implements HomeDataSource {
     var ref = await _fireStore
         .collection(GROUPS_COLLECTION_PATH)
         .add(groupRequst.toMap());
-    print(groupRequst.groupImage!);
 
     await _fireStore
         .collection(GROUPS_COLLECTION_PATH)

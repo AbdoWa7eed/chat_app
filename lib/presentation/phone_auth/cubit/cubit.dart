@@ -57,7 +57,7 @@ class PhoneAuthCubit extends Cubit<PhoneAuthStates> {
     await _isUserExists(uid);
     if (!isExists) {
       await _appPreferences.setUserPhoneNumber(phoneNumber!);
-    }else{
+    } else {
       await _appPreferences.setUserRegistered();
     }
     UID = uid;
@@ -67,12 +67,11 @@ class PhoneAuthCubit extends Cubit<PhoneAuthStates> {
     (await _authRepository.isUserAlreadyExists(uid)).fold((failure) {
       emit(VerifyCodeErrorState(failure.message));
     }, (exists) {
-      print(exists);
       isExists = exists;
     });
   }
 
-    Future<String> getToken() async {
+  Future<String> getToken() async {
     String token = "";
     (await _notificationRepo.getDeviceToken()).fold((failure) {},
         (deviceToken) {
@@ -89,10 +88,5 @@ class PhoneAuthCubit extends Cubit<PhoneAuthStates> {
     }
     emit(VerificationStates());
     AltSmsAutofill().unregisterListener();
-  }
-
-  @override
-  Future<void> close() async {
-   // super.close();
   }
 }

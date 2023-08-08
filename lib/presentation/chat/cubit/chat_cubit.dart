@@ -6,7 +6,6 @@ import 'package:chat_app/domain/repository/single_chat_repo.dart';
 import 'package:chat_app/presentation/chat/cubit/chat_states.dart';
 import 'package:chat_app/presentation/resources/language_manger.dart';
 import 'package:chat_app/presentation/resources/strings_manager.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../app/constants.dart';
 import '../../../domain/models/models.dart';
 import '../../cubit/app_cubit.dart';
@@ -54,16 +53,18 @@ class InChatCubit extends Cubit<InChatStates> {
 
     if (state is SendMessageSuccessState) {
       if (receiverModel.userDeviceLang == LanguageType.ENGLISH.getValue()) {
-            await sendNotification(
-                receiverModel: receiverModel,
-                body:  AppStrings.notificationChatBodyEN,
-                title: AppStrings.notificationTitleEN,);
-          } else {
-            await sendNotification(
-                receiverModel: receiverModel,
-                body:  AppStrings.notificationChatBodyAR,
-                title: AppStrings.notificationTitleAR,);
-          }
+        await sendNotification(
+          receiverModel: receiverModel,
+          body: AppStrings.notificationChatBodyEN,
+          title: AppStrings.notificationTitleEN,
+        );
+      } else {
+        await sendNotification(
+          receiverModel: receiverModel,
+          body: AppStrings.notificationChatBodyAR,
+          title: AppStrings.notificationTitleAR,
+        );
+      }
     }
   }
 
@@ -73,7 +74,7 @@ class InChatCubit extends Cubit<InChatStates> {
       required String title,
       String? groupName}) async {
     (await _notificationRepo.sendNotification(receiverModel,
-            "${appUserModel!.nickName} ${body}${groupName ?? ""}", title))
+            "${appUserModel!.nickName} $body${groupName ?? ""}", title))
         .fold((l) {
       emit(SendMessagesErrorState(l.message));
     }, (r) {
@@ -126,13 +127,13 @@ class InChatCubit extends Cubit<InChatStates> {
           if (element.userDeviceLang == LanguageType.ENGLISH.getValue()) {
             await sendNotification(
                 receiverModel: element,
-                body:  AppStrings.notificationGroupBodyEN,
+                body: AppStrings.notificationGroupBodyEN,
                 title: AppStrings.notificationTitleEN,
                 groupName: groupModel.groupName);
           } else {
             await sendNotification(
                 receiverModel: element,
-                body:  AppStrings.notificationGroupBodyAR,
+                body: AppStrings.notificationGroupBodyAR,
                 title: AppStrings.notificationTitleAR,
                 groupName: groupModel.groupName);
           }
@@ -144,7 +145,6 @@ class InChatCubit extends Cubit<InChatStates> {
   void getGroupMessages(String groupID) async {
     emit(GetMessagesLoadingState());
     (await _groupChatRepo.getGroupMessages(groupID)).fold((failure) {
-      print(failure.message);
       emit(GetMessagesErrorState(failure.message));
     }, (stream) {
       stream.listen((event) {

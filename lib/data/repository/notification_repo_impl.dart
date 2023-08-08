@@ -1,3 +1,5 @@
+// ignore_for_file: void_checks
+
 import 'package:chat_app/data/data_source/notification/notification_data_source.dart';
 import 'package:chat_app/data/mapper/mapper.dart';
 import 'package:chat_app/data/network/failure.dart';
@@ -11,14 +13,11 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../app/constants.dart';
 
 class NotificationRepoImpl implements NotificationRepo {
-
   final NetworkInfo _networkInfo;
   final NotificationDataSource _notificationDataSource;
 
   NotificationRepoImpl(this._networkInfo, this._notificationDataSource);
 
-
-  
   @override
   Future<Either<Failure, void>> sendNotification(
       UserModel userModel, String body, String title) async {

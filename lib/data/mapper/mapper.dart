@@ -2,7 +2,6 @@ import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/app/extensions.dart';
 import 'package:chat_app/data/network/requests.dart';
 import 'package:chat_app/domain/models/models.dart';
-import 'package:dartz/dartz.dart';
 
 extension UserModelMapper on UserModel {
   UserRequest toUserRequest() {

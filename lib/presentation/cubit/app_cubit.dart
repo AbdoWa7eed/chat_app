@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls
+
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:chat_app/app/app_preferences.dart';
@@ -65,7 +67,6 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
   }
 
   Future<void> setAppLanguage() async {
-    print(await _appPreferences.getAppLanguage());
     bool isUpdated = false;
     if (await _appPreferences.getAppLanguage() ==
         LanguageType.ENGLISH.getValue()) {
@@ -81,14 +82,13 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
         isUpdated = true;
       });
     }
-    if(isUpdated){
+    if (isUpdated) {
       await _appPreferences.changeAppLanguage();
     }
   }
 
   setDeviceToken(String token) async {
     (await _homeRepository.setDeviceToken(token)).fold((failure) {
-      print(failure.message);
       emit(SetTokenErrorState(failure.message));
     }, (success) {
       emit(SetTokenSuccessState());
@@ -120,7 +120,7 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
   }
 
   List<ChatModel> chats = [];
-  int? currentChatIndex = null;
+  int? currentChatIndex;
 
   getChats() async {
     emit(GetChatsLoadingState());

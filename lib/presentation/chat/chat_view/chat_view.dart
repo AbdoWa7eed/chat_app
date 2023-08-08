@@ -282,7 +282,6 @@ class _ChatViewState extends State<ChatView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ignore: dead_code
           if (_isGroup) ...[
             Text(
               cubit.chatAppCubit.groupMembers[message.senderUID]?.username ??
@@ -384,7 +383,6 @@ class _ChatViewState extends State<ChatView> {
 
   _isGroupChat(ChatAppCubit cubit) {
     _isGroup = cubit.isGroup;
-    print(_isGroup);
   }
 
   InChatCubit _initCubit(InChatCubit cubit) {
