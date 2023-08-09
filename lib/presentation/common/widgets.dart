@@ -82,7 +82,8 @@ Widget appBarLeading({required Function() onPressed}) {
   );
 }
 
-showPicker(BuildContext context, ChatAppCubit cubit) {
+showPicker(BuildContext context,
+    {required Function() onCameraTapped, required Function() onGalleryTapped}) {
   showModalBottomSheet(
     context: context,
     builder: (context) {
@@ -95,19 +96,13 @@ showPicker(BuildContext context, ChatAppCubit cubit) {
               trailing: const Icon(Icons.arrow_forward_ios, size: AppSize.s18),
               leading: const Icon(Icons.camera),
               title: const Text(AppStrings.fromGallery).tr(),
-              onTap: () {
-                cubit.imageFromGallery();
-                Navigator.of(context).pop();
-              },
+              onTap: onGalleryTapped,
             ),
             ListTile(
               trailing: const Icon(Icons.arrow_forward_ios, size: AppSize.s18),
               leading: const Icon(Icons.camera_alt_outlined),
               title: const Text(AppStrings.fromCamera).tr(),
-              onTap: () {
-                cubit.imageFromCamera();
-                Navigator.of(context).pop();
-              },
+              onTap: onCameraTapped,
             ),
           ],
         ),

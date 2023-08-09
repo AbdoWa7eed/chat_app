@@ -4,6 +4,7 @@ import 'package:chat_app/data/data_source/auth/auth_data_srouce.dart';
 import 'package:chat_app/data/data_source/group_chat/group_data_source.dart';
 import 'package:chat_app/data/data_source/home/home_data_source.dart';
 import 'package:chat_app/data/data_source/notification/notification_data_source.dart';
+import 'package:chat_app/data/data_source/register/register_data_source.dart';
 import 'package:chat_app/data/data_source/single_chat/chat_data_source.dart';
 import 'package:chat_app/data/network/app_api.dart';
 import 'package:chat_app/data/network/network_info.dart';
@@ -11,14 +12,17 @@ import 'package:chat_app/data/repository/auth_repository_impl.dart';
 import 'package:chat_app/data/repository/group_repo_impl.dart';
 import 'package:chat_app/data/repository/home_repo_impl.dart';
 import 'package:chat_app/data/repository/notification_repo_impl.dart';
+import 'package:chat_app/data/repository/register_repo_impl.dart';
 import 'package:chat_app/data/repository/single_chat_repo_impl.dart';
 import 'package:chat_app/domain/repository/group_chat_repo.dart';
 import 'package:chat_app/domain/repository/home_repository.dart';
 import 'package:chat_app/domain/repository/notification_repo.dart';
+import 'package:chat_app/domain/repository/register_repo.dart';
 import 'package:chat_app/domain/repository/single_chat_repo.dart';
 import 'package:chat_app/presentation/chat/cubit/chat_cubit.dart';
 import 'package:chat_app/presentation/cubit/app_cubit.dart';
 import 'package:chat_app/presentation/phone_auth/cubit/cubit.dart';
+import 'package:chat_app/presentation/register/cubit/cubit.dart';
 import 'package:chat_app/presentation/resources/strings_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -58,22 +62,12 @@ initAppModule() async {
   instance.registerLazySingleton<NotificationSender>(
       () => NotificationSenderImpl());
 
-  instance.registerLazySingleton<HomeDataSource>(() => HomeDataSourceImpl(
-      instance<FirebaseStorage>(), instance<FirebaseFirestore>()));
-
   instance.registerLazySingleton<NotificationDataSource>(() =>
       NotificationDataSourceImpl(
           instance<NotificationSender>(), instance<FirebaseMessaging>()));
 
-  instance.registerLazySingleton<HomeRepository>(() =>
-      HomeRepositoryImpl(instance<NetworkInfo>(), instance<HomeDataSource>()));
-
   instance.registerLazySingleton<NotificationRepo>(() => NotificationRepoImpl(
       instance<NetworkInfo>(), instance<NotificationDataSource>()));
-
-  initPhoneAuthModule();
-
-  instance.registerLazySingleton<ChatAppCubit>(() => ChatAppCubit());
 
   UID = instance<AppPreferences>().getUserUid();
 }
@@ -97,11 +91,34 @@ initImagePickerInstance() {
 }
 
 initHomeModule() async {
+  if (!GetIt.I.isRegistered<HomeDataSource>()) {
+    instance.registerLazySingleton<HomeDataSource>(() => HomeDataSourceImpl(
+        instance<FirebaseStorage>(), instance<FirebaseFirestore>()));
+    instance.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl(
+        instance<NetworkInfo>(), instance<HomeDataSource>()));
+  }
+  if (!GetIt.I.isRegistered<ChatAppCubit>()) {
+    instance.registerLazySingleton<ChatAppCubit>(() => ChatAppCubit());
+  }
   var cubit = instance<ChatAppCubit>();
   await cubit.getUserData(UID!, isUID: true);
   await cubit.getChattingUsers();
   await cubit.getChats();
   await cubit.setStatus(AppStrings.online.tr());
+}
+
+initRegisterModule() async {
+  await initImagePickerInstance();
+  if (!GetIt.I.isRegistered<RegisterDataSource>()) {
+    instance.registerLazySingleton<RegisterDataSource>(() =>
+        RegisterDataSourceImpl(
+            instance<FirebaseStorage>(), instance<FirebaseFirestore>()));
+    instance.registerLazySingleton<RegisterRepository>(() => RegisterRepoImpl(
+        instance<NetworkInfo>(), instance<RegisterDataSource>()));
+  }
+  if (!GetIt.I.isRegistered<RegisterCubit>()) {
+    instance.registerLazySingleton<RegisterCubit>(() => RegisterCubit());
+  }
 }
 
 initChatModule() async {

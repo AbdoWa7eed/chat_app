@@ -1,7 +1,7 @@
 import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/app/di.dart';
-import 'package:chat_app/presentation/cubit/app_cubit.dart';
-import 'package:chat_app/presentation/cubit/app_states.dart';
+import 'package:chat_app/presentation/register/cubit/cubit.dart';
+import 'package:chat_app/presentation/register/cubit/states.dart';
 import 'package:chat_app/presentation/resources/assets_manager.dart';
 import 'package:chat_app/presentation/resources/color_manager.dart';
 import 'package:chat_app/presentation/resources/constants_manager.dart';
@@ -13,9 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../app/functions.dart';
-import '../common/wigets.dart';
+import '../common/widgets.dart';
 
 class RegisterView extends StatelessWidget {
   RegisterView({Key? key}) : super(key: key);
@@ -32,19 +31,19 @@ class RegisterView extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
-      child: BlocConsumer<ChatAppCubit, ChatAppStates>(
+      child: BlocConsumer<RegisterCubit, RegisterStates>(
         listener: (context, state) {
           _listenerStateValidation(context, state);
         },
         builder: (context, state) {
-          var cubit = instance<ChatAppCubit>();
+          var cubit = instance<RegisterCubit>();
           return _getContentWidget(context, cubit);
         },
       ),
     );
   }
 
-  Widget _getContentWidget(BuildContext context, ChatAppCubit cubit) {
+  Widget _getContentWidget(BuildContext context, RegisterCubit cubit) {
     return Scaffold(
         backgroundColor: ColorManager.backgroundColor,
         body: SafeArea(
@@ -71,7 +70,15 @@ class RegisterView extends StatelessWidget {
                           ),
                           InkWell(
                               onTap: () {
-                                showPicker(context, cubit);
+                                showPicker(
+                                  context,
+                                  onCameraTapped: () {
+                                    cubit.imageFromCamera();
+                                  },
+                                  onGalleryTapped: () {
+                                    cubit.imageFromGallery();
+                                  },
+                                );
                               },
                               child: cubit.image == null
                                   ? SvgPicture.asset(
@@ -122,7 +129,7 @@ class RegisterView extends StatelessWidget {
                       child: TextFormField(
                         maxLength: AppConstants.textFieldMaxLength,
                         validator: (value) {
-                          if (value!.isEmpty){
+                          if (value!.isEmpty) {
                             return AppStrings.thisFieldIsRequired.tr();
                           } else if (value.contains(" ")) {
                             return AppStrings.userNameCantContainSpaces.tr();
@@ -169,11 +176,12 @@ class RegisterView extends StatelessWidget {
                                 username: _userNameController.text,
                                 nickName: _nickNameController.text,
                                 bio: _bioController.text,
-                            onSuccess: (){
-                              dismissDialog(context);
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  Routes.homeRoute, (route) => false);
-                            });
+                                onSuccess: (token) {
+                                  //dismissDialog(context);
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      Routes.homeRoute, (route) => false,
+                                      arguments: token);
+                                });
                           }
                         },
                         child: Text(
@@ -190,7 +198,7 @@ class RegisterView extends StatelessWidget {
         ));
   }
 
-  Widget _showImageWidget(ChatAppCubit cubit) {
+  Widget _showImageWidget(RegisterCubit cubit) {
     return Container(
       height: AppSize.s100,
       width: AppSize.s100,
@@ -205,8 +213,8 @@ class RegisterView extends StatelessWidget {
     );
   }
 
-  _listenerStateValidation(BuildContext context, ChatAppStates state) {
-    if (state is ChatAppLoadingStates) {
+  _listenerStateValidation(BuildContext context, RegisterStates state) {
+    if (state is AddUserLoadingState) {
       showDialog(
         barrierDismissible: false,
         context: context,
@@ -218,7 +226,7 @@ class RegisterView extends StatelessWidget {
           );
         },
       );
-    } else if (state is ChatAppErrorStates) {
+    } else if (state is AddUserErrorState) {
       dismissDialog(context);
       showDialog(
         barrierDismissible: false,
@@ -230,9 +238,6 @@ class RegisterView extends StatelessWidget {
               isConfirmation: true);
         },
       );
-    }else{
-      dismissDialog(context);
     }
   }
-
 }

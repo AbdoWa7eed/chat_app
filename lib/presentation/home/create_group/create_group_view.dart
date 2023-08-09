@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../app/functions.dart';
-import '../../common/wigets.dart';
+import '../../common/widgets.dart';
 import '../../cubit/app_cubit.dart';
 import '../../resources/assets_manager.dart';
 import '../../resources/color_manager.dart';

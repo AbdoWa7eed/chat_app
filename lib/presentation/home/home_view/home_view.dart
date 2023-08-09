@@ -19,7 +19,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import '../../../domain/models/models.dart';
-import '../../common/wigets.dart';
+import '../../common/widgets.dart';
 import '../search_delegate/search_delegate.dart';
 
 class HomeView extends StatefulWidget {

@@ -39,7 +39,7 @@ class RouteGenerator {
       case Routes.phoneVerifyRoute:
         return MaterialPageRoute(builder: (context) => VerifyCodeView());
       case Routes.registerRoute:
-        initImagePickerInstance();
+        initRegisterModule();
         return MaterialPageRoute(builder: (context) => RegisterView());
       case Routes.homeRoute:
         initHomeModule();

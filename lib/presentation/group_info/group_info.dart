@@ -2,7 +2,7 @@ import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/app/di.dart';
 import 'package:chat_app/app/functions.dart';
 import 'package:chat_app/domain/models/models.dart';
-import 'package:chat_app/presentation/common/wigets.dart';
+import 'package:chat_app/presentation/common/widgets.dart';
 import 'package:chat_app/presentation/cubit/app_cubit.dart';
 import 'package:chat_app/presentation/cubit/app_states.dart';
 import 'package:chat_app/presentation/resources/assets_manager.dart';
@@ -125,7 +125,15 @@ class _GroupInfoViewState extends State<GroupInfoView> {
                     ),
                     InkWell(
                       onTap: () {
-                        showPicker(context, cubit);
+                        showPicker(
+                          context,
+                          onCameraTapped: () {
+                            cubit.imageFromCamera();
+                          },
+                          onGalleryTapped: () {
+                            cubit.imageFromGallery();
+                          },
+                        );
                       },
                       child: CircleAvatar(
                         backgroundColor: ColorManager.darkGray,

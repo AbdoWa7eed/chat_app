@@ -6,9 +6,6 @@ import 'package:dartz/dartz.dart';
 
 abstract class HomeRepository {
   Future<Either<Failure, String>> uploadImage(File file);
-
-  Future<Either<Failure, void>> addNewUser(UserModel user);
-
   Future<Either<Failure, UserModel>> getUserData(String user,
       {bool isUID = false});
 

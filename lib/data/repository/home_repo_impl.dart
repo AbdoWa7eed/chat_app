@@ -1,6 +1,6 @@
 // ignore_for_file: void_checks
-
 import 'dart:io';
+
 import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/data/data_source/home/home_data_source.dart';
 import 'package:chat_app/data/mapper/mapper.dart';
@@ -18,35 +18,6 @@ class HomeRepositoryImpl implements HomeRepository {
   final HomeDataSource _homeDataSource;
 
   HomeRepositoryImpl(this._networkInfo, this._homeDataSource);
-
-  @override
-  Future<Either<Failure, void>> addNewUser(UserModel user) async {
-    if (await _networkInfo.isConnected) {
-      bool isAdded =
-          await _homeDataSource.addUserToFireStore(user.toUserRequest());
-      if (isAdded) {
-        return const Right(Constants.zero);
-      } else {
-        return Left(Failure(AppStrings.userIsExists.tr()));
-      }
-    } else {
-      return Left(Failure(AppStrings.connectionError.tr()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, String>> uploadImage(File file) async {
-    if (await _networkInfo.isConnected) {
-      try {
-        var url = await _homeDataSource.uploadImage(file);
-        return Right(url);
-      } catch (error) {
-        return Left(Failure(AppStrings.errorWhileUploadingImage.tr()));
-      }
-    } else {
-      return Left(Failure(AppStrings.connectionError.tr()));
-    }
-  }
 
   @override
   Future<Either<Failure, UserModel>> getUserData(String user,
@@ -217,6 +188,20 @@ class HomeRepositoryImpl implements HomeRepository {
         return const Right(Constants.zero);
       } catch (error) {
         return Left(Failure(AppStrings.anErrorOccurred.tr()));
+      }
+    } else {
+      return Left(Failure(AppStrings.connectionError.tr()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadImage(File file) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        var url = await _homeDataSource.uploadImage(file);
+        return Right(url);
+      } catch (error) {
+        return Left(Failure(AppStrings.errorWhileUploadingImage.tr()));
       }
     } else {
       return Left(Failure(AppStrings.connectionError.tr()));

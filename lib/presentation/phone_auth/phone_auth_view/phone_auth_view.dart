@@ -1,6 +1,6 @@
 import 'package:chat_app/app/di.dart';
 import 'package:chat_app/app/functions.dart';
-import 'package:chat_app/presentation/common/wigets.dart';
+import 'package:chat_app/presentation/common/widgets.dart';
 import 'package:chat_app/presentation/phone_auth/cubit/cubit.dart';
 import 'package:chat_app/presentation/phone_auth/cubit/states.dart';
 import 'package:chat_app/presentation/resources/assets_manager.dart';
@@ -29,16 +29,13 @@ class _PhoneAuthenticationViewState extends State<PhoneAuthenticationView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<PhoneAuthCubit>.value(
-      value: instance<PhoneAuthCubit>(),
-      child: BlocConsumer<PhoneAuthCubit, PhoneAuthStates>(
-        listener: (context, state) {
-          _listenerStateValidation(context, state);
-        },
-        builder: (context, state) {
-          return _getContent();
-        },
-      ),
+    return BlocConsumer<PhoneAuthCubit, PhoneAuthStates>(
+      listener: (context, state) {
+        _listenerStateValidation(context, state);
+      },
+      builder: (context, state) {
+        return _getContent();
+      },
     );
   }
 
@@ -49,7 +46,8 @@ class _PhoneAuthenticationViewState extends State<PhoneAuthenticationView> {
         context: context,
         builder: (context) {
           return getDialogWidget(context,
-              animatedImage: JsonAssets.loading, title: AppStrings.loading.tr());
+              animatedImage: JsonAssets.loading,
+              title: AppStrings.loading.tr());
         },
       );
     } else if (state is SendCodeErrorState) {

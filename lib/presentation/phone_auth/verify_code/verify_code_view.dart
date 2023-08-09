@@ -1,5 +1,5 @@
 import 'package:chat_app/app/di.dart';
-import 'package:chat_app/presentation/common/wigets.dart';
+import 'package:chat_app/presentation/common/widgets.dart';
 import 'package:chat_app/presentation/phone_auth/cubit/cubit.dart';
 import 'package:chat_app/presentation/phone_auth/cubit/states.dart';
 import 'package:chat_app/presentation/resources/assets_manager.dart';

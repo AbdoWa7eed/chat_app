@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_function_literals_in_foreach_calls
-
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:chat_app/app/app_preferences.dart';
@@ -8,6 +6,7 @@ import 'package:chat_app/app/di.dart';
 import 'package:chat_app/domain/models/models.dart';
 import 'package:chat_app/domain/repository/home_repository.dart';
 import 'package:chat_app/domain/repository/notification_repo.dart';
+import 'package:chat_app/presentation/common/functions.dart';
 import 'package:chat_app/presentation/cubit/app_states.dart';
 import 'package:chat_app/presentation/resources/language_manger.dart';
 import 'package:chat_app/presentation/resources/strings_manager.dart';
@@ -19,52 +18,10 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
   final HomeRepository _homeRepository = instance<HomeRepository>();
   final AppPreferences _appPreferences = instance<AppPreferences>();
   final NotificationRepo _notificationRepo = instance<NotificationRepo>();
-  File? image;
-  String? _imageUrl;
   int tabBarIndex = 0;
   bool isGroup = false;
-
-  //Calling Firebase Functions
-  void addUser(
-      {required String username,
-      required String nickName,
-      String? bio,
-      required Function onSuccess}) async {
-    emit(AddUserLoadingState());
-    if (image != null) {
-      await _uploadImage();
-    }
-    String phoneNumber =
-        _appPreferences.getUserPhoneNumber() ?? Constants.empty;
-    String token = await getToken();
-    await _appPreferences.setDeviceToken(token);
-    userModel = UserModel(
-        UID!,
-        AppStrings.online,
-        username,
-        phoneNumber,
-        nickName,
-        _imageUrl ?? Constants.defaultUserImage,
-        bio ?? Constants.empty,
-        token,
-        LanguageType.ENGLISH.getValue());
-    (await _homeRepository.addNewUser(userModel!)).fold((failure) {
-      emit(AddUserErrorState(failure.message));
-    }, (r) async {
-      _afterRegisterCompleted(username);
-      onSuccess.call();
-      emit(AddUserSuccessState());
-    });
-  }
-
-  Future<String> getToken() async {
-    String token = "";
-    (await _notificationRepo.getDeviceToken()).fold((failure) {},
-        (deviceToken) {
-      token = deviceToken;
-    });
-    return token;
-  }
+  File? image;
+  String? _imageUrl;
 
   Future<void> setAppLanguage() async {
     bool isUpdated = false;
@@ -93,13 +50,6 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
     }, (success) {
       emit(SetTokenSuccessState());
     });
-  }
-
-  void _afterRegisterCompleted(String username) {
-    _appPreferences.deletePhoneNumber();
-    _appPreferences.setUserRegistered();
-    image = null;
-    _imageUrl = null;
   }
 
   UserModel? userModel;
@@ -147,7 +97,19 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
   List<UserModel> users = [];
   void createUsersList() {
     users.clear();
-    chattingUsers.entries.forEach((e) => users.add(e.value));
+    for (var e in chattingUsers.entries) {
+      users.add(e.value);
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    emit(UploadImageLoadingState());
+    (await _homeRepository.uploadImage(image!)).fold((failure) {
+      emit(UploadImageErrorState(failure.message));
+    }, (url) {
+      _imageUrl = url;
+      emit(UploadImageSuccessState());
+    });
   }
 
   updateUserInfo({
@@ -333,29 +295,6 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
     });
   }
 
-  //UI Functions
-  late ImagePicker _imagePicker;
-
-  imageFromGallery() async {
-    _imagePicker = instance<ImagePicker>();
-    String? path =
-        (await _imagePicker.pickImage(source: ImageSource.gallery))?.path;
-    if (path != null) {
-      image = File(path);
-    }
-    emit(PickedImageState());
-  }
-
-  imageFromCamera() async {
-    _imagePicker = instance<ImagePicker>();
-    String? path =
-        (await _imagePicker.pickImage(source: ImageSource.camera))?.path;
-    if (path != null) {
-      image = File(path);
-    }
-    emit(PickedImageState());
-  }
-
   Map<int, bool> checkedUsers = {};
   addCheckedStateToMap(int index, bool? value) {
     if (value == true) {
@@ -388,18 +327,20 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
     }
   }
 
-  //private Functions
-  Future<void> _uploadImage() async {
-    emit(UploadImageLoadingState());
-    (await _homeRepository.uploadImage(image!)).fold((failure) {
-      emit(UploadImageErrorState(failure.message));
-    }, (url) {
-      _imageUrl = url;
-      emit(UploadImageSuccessState());
-    });
+  late ImagePicker _imagePicker;
+
+  imageFromGallery() async {
+    _imagePicker = instance<ImagePicker>();
+    image = await pickImageFromGallery(_imagePicker);
+    emit(PickedImageState());
   }
 
-  //close function
+  imageFromCamera() async {
+    _imagePicker = instance<ImagePicker>();
+    image = await pickImageFromCamera(_imagePicker);
+    emit(PickedImageState());
+  }
+
   @override
   Future<void> close() {
     setStatus(DateTime.now().toString());

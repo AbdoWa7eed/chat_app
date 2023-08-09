@@ -2,7 +2,7 @@ import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/app/di.dart';
 import 'package:chat_app/domain/models/models.dart';
 import 'package:chat_app/presentation/chat/cubit/chat_cubit.dart';
-import 'package:chat_app/presentation/common/wigets.dart';
+import 'package:chat_app/presentation/common/widgets.dart';
 import 'package:chat_app/presentation/cubit/app_cubit.dart';
 import 'package:chat_app/presentation/resources/assets_manager.dart';
 import 'package:chat_app/presentation/resources/color_manager.dart';
@@ -410,4 +410,5 @@ class _ChatViewState extends State<ChatView> {
     cubit.chatAppCubit.currentChatIndex = null;
     Navigator.of(context).pop();
   }
+
 }
