@@ -10,7 +10,7 @@ import 'package:chat_app/presentation/resources/values_manager.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:restart_app/restart_app.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({super.key});
@@ -83,7 +83,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   _changeLangauge() async {
     await instance<ChatAppCubit>().setAppLanguage().then((value) {
       instance<ChatAppCubit>().setTabBarIndex(0);
-      Phoenix.rebirth(context);
+      Restart.restartApp(webOrigin: Routes.splashRoute);
     });
   }
 
@@ -92,5 +92,4 @@ class _SettingsWidgetState extends State<SettingsWidget> {
         .pushNamedAndRemoveUntil(Routes.phoneAuthRoute, (route) => false);
     _appPrefrences.logOut();
   }
-
 }

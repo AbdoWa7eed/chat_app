@@ -59,18 +59,6 @@ Widget getDialogWidget(BuildContext context,
   );
 }
 
-String validateTime(String dateTime) {
-  var formatter = DateTime.parse(dateTime);
-  var difference = DateTime.now().difference(formatter);
-  if (difference.inHours >= 24 && difference.inHours < 48) {
-    return AppStrings.yesterday.tr();
-  } else if (difference.inHours >= 48) {
-    return DateFormat('yyyy-MM-dd').format(formatter);
-  } else {
-    return DateFormat("h:mma").format(formatter).toString();
-  }
-}
-
 Widget appBarLeading({required Function() onPressed}) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: AppPadding.p20),

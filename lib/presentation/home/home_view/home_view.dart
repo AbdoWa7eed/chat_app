@@ -1,15 +1,14 @@
 import 'package:chat_app/app/app_preferences.dart';
-import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/app/di.dart';
 import 'package:chat_app/presentation/cubit/app_cubit.dart';
 import 'package:chat_app/presentation/cubit/app_states.dart';
 import 'package:chat_app/presentation/home/create_group/create_group_view.dart';
 import 'package:chat_app/presentation/home/menu/menu_items.dart';
 import 'package:chat_app/presentation/home/settings/settings.dart';
+import 'package:chat_app/presentation/home/tab_bar_screens.dart/tab_bar_screens.dart';
 import 'package:chat_app/presentation/resources/assets_manager.dart';
 import 'package:chat_app/presentation/resources/color_manager.dart';
 import 'package:chat_app/presentation/resources/constants_manager.dart';
-import 'package:chat_app/presentation/resources/routes_manager.dart';
 import 'package:chat_app/presentation/resources/strings_manager.dart';
 import 'package:chat_app/presentation/resources/values_manager.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -18,8 +17,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
-import '../../../domain/models/models.dart';
-import '../../common/widgets.dart';
 import '../search_delegate/search_delegate.dart';
 
 class HomeView extends StatefulWidget {
@@ -130,211 +127,21 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   }
 
   Widget _getContentWidget(ChatAppCubit cubit) {
-    if (cubit.state is ChatAppLoadingStates && !cubit.isGroup) {
+    if (cubit.state is ChatAppLoadingStates) {
       return _getLoadingScreen();
     } else {
       if (cubit.tabBarIndex == 0) {
         return Expanded(
             child: cubit.chats.isNotEmpty && cubit.chattingUsers.isNotEmpty
-                ? _getChatsListWidget(cubit)
+                ? const TabBarScreens()
                 : _getEmptyScreenWidget(cubit));
       } else {
         return Expanded(
             child: cubit.groups.isNotEmpty
-                ? _getChatsListWidget(cubit)
+                ? const TabBarScreens()
                 : _getEmptyScreenWidget(cubit));
       }
     }
-  }
-
-  Widget _getChatsListWidget(ChatAppCubit cubit) {
-    return ListView.separated(
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) {
-          if (cubit.tabBarIndex == 0) {
-            return _getSingleChatItemWidget(cubit.chats[index], index, cubit);
-          } else {
-            return _getGroupChatItemWidget(cubit.groups[index], index, cubit);
-          }
-        },
-        separatorBuilder: (context, index) => const SizedBox(
-              height: AppSize.s25,
-            ),
-        itemCount:
-            cubit.tabBarIndex == 0 ? cubit.chats.length : cubit.groups.length);
-  }
-
-  Widget _getSingleChatItemWidget(
-      ChatModel chat, int index, ChatAppCubit cubit) {
-    final UserModel model;
-    if (chat.receiverUser == UID) {
-      model = cubit.chattingUsers[chat.senderUser]!;
-    } else {
-      model = cubit.chattingUsers[chat.receiverUser]!;
-    }
-    return InkWell(
-      onTap: () async {
-        cubit.isGroup = false;
-        cubit.currentChatIndex = index;
-        Navigator.of(context).pushNamed(Routes.chatRoute, arguments: model);
-      },
-      child: SizedBox(
-        height: AppSize.s60,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppPadding.p20),
-          child: Row(
-            children: [
-              Stack(
-                alignment: AlignmentDirectional.topEnd,
-                children: [
-                  CircleAvatar(
-                    radius: AppSize.s25,
-                    backgroundImage: NetworkImage(model.imageLink),
-                    backgroundColor: ColorManager.darkGray,
-                  ),
-                  // if (model.status == AppStrings.online) ...[
-                  //   CircleAvatar(
-                  //     radius: AppSize.s6,
-                  //     backgroundColor: ColorManager.green,
-                  //   )
-                  // ]
-                ],
-              ),
-              const SizedBox(
-                width: AppSize.s10,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      model.nickName,
-                      maxLines: AppConstants.minLines,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      chat.lastMessage,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: AppConstants.minLines,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: AppSize.s6,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  //12/2/2023
-                  Text(
-                    validateTime(chat.lastMessageTime),
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                  if (chat.unreadMessages != 0) ...[
-                    CircleAvatar(
-                      radius: AppSize.s10,
-                      child: Text("${chat.unreadMessages}",
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall!
-                              .copyWith(color: ColorManager.white)),
-                    )
-                  ]
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _getGroupChatItemWidget(
-      GroupChatModel groupModel, int index, ChatAppCubit cubit) {
-    return InkWell(
-      onTap: () {
-        cubit.isGroup = true;
-        cubit.getGroupMembers(groupModel).then((value) {
-          Navigator.of(context)
-              .pushNamed(Routes.chatRoute, arguments: groupModel);
-        });
-      },
-      child: SizedBox(
-        height: AppSize.s60,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppPadding.p20),
-          child: Row(
-            children: [
-              Stack(
-                alignment: AlignmentDirectional.topEnd,
-                children: [
-                  CircleAvatar(
-                    radius: AppSize.s25,
-                    backgroundImage: NetworkImage(groupModel.groupImage),
-                    backgroundColor: ColorManager.darkGray,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                width: AppSize.s10,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      groupModel.groupName,
-                      maxLines: AppConstants.minLines,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      groupModel.lastMessage,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: AppConstants.minLines,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: AppSize.s6,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  //12/2/2023
-                  Text(
-                    groupModel.lastMessageTime.isNotEmpty
-                        ? validateTime(groupModel.lastMessageTime)
-                        : groupModel.lastMessageTime,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                  if (groupModel.groupMembers[appUserModel!.uid] != 0) ...[
-                    CircleAvatar(
-                      radius: AppSize.s10,
-                      child: Text(
-                          "${groupModel.groupMembers[appUserModel!.uid]}",
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall!
-                              .copyWith(color: ColorManager.white)),
-                    )
-                  ]
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _getEmptyScreenWidget(ChatAppCubit cubit) {

@@ -5,7 +5,6 @@ import 'package:chat_app/presentation/resources/language_manger.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'app/app.dart';
 import 'app/di.dart';
 
@@ -20,5 +19,5 @@ void main() async {
   runApp(EasyLocalization(
       supportedLocales: const [ARABIC_LOCAL, ENGLISH_LOCAL],
       path: ASSET_PATH_LOCALIZATION,
-      child: Phoenix(child: MyApp(),)));
+      child:  MyApp(),));
 }

@@ -55,7 +55,7 @@ dependencies:
   intl: ^0.18.0
   firebase_messaging: ^14.2.4
   http: ^0.13.5
-  flutter_phoenix: ^1.1.0
+  restart_app: ^1.2.1
   easy_localization: ^3.0.1
 
 dev_dependencies:

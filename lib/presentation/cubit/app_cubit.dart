@@ -19,7 +19,6 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
   final AppPreferences _appPreferences = instance<AppPreferences>();
   final NotificationRepo _notificationRepo = instance<NotificationRepo>();
   int tabBarIndex = 0;
-  bool isGroup = false;
   File? image;
   String? _imageUrl;
 
@@ -73,14 +72,13 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
   int? currentChatIndex;
 
   getChats() async {
-    emit(GetChatsLoadingState());
     (await _homeRepository.getChats(UID!)).fold((failure) {
       emit(GetChatsErrorState(failure.message));
     }, (stream) async {
       stream.listen((listChatModel) async {
         chats.clear();
         chats.addAll(listChatModel);
-        getChattingUsers();
+        await getChattingUsers();
         emit(GetChatsSuccessState());
       });
     });

@@ -15,6 +15,9 @@ class InChatCubit extends Cubit<InChatStates> {
   final SingleChatRepo _singleChatRepo = instance<SingleChatRepo>();
   final GroupChatRepo _groupChatRepo = instance<GroupChatRepo>();
   final NotificationRepo _notificationRepo = instance<NotificationRepo>();
+  late UserModel userModel;
+  late bool isGroup;
+  late GroupChatModel groupModel;
 
   final chatAppCubit = instance<ChatAppCubit>();
 
@@ -25,13 +28,13 @@ class InChatCubit extends Cubit<InChatStates> {
     (await _singleChatRepo.getMessages(senderUID: UID!, receiverUID: model.uid))
         .fold((failure) {
       emit(GetMessagesErrorState(failure.message));
-    }, (stream) {
+    }, (stream) async {
       stream.listen((event) {
         messages = [];
         messages.addAll(event);
         emit(GetMessagesSuccessState());
       });
-      getUserState(model.uid);
+      await getUserStatus(model.uid);
     });
   }
 
@@ -92,14 +95,13 @@ class InChatCubit extends Cubit<InChatStates> {
     });
   }
 
-  String? userStatus;
-  Future<void> getUserState(String uid) async {
+  Future<void> getUserStatus(String uid) async {
     emit(GetMessagesLoadingState());
     (await _singleChatRepo.getUserStatus(uid)).fold((failure) {
       emit(GetUserStatusErrorState(failure.message));
     }, (statusStream) {
       statusStream.listen((status) {
-        userStatus = status;
+        userModel.status = status;
         emit(GetUserStatusSuccessState());
       });
     });

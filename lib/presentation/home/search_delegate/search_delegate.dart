@@ -1,5 +1,3 @@
-
-
 import 'package:chat_app/presentation/resources/routes_manager.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -48,11 +46,11 @@ class UsersSearch extends SearchDelegate {
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
         appBarTheme: Theme.of(context).appBarTheme.copyWith(
-          backgroundColor: ColorManager.backgroundColor,
-          centerTitle: false,
-          titleSpacing: AppSize.s1,
-          elevation: AppSize.s4,
-        ),
+              backgroundColor: ColorManager.backgroundColor,
+              centerTitle: false,
+              titleSpacing: AppSize.s1,
+              elevation: AppSize.s4,
+            ),
         inputDecorationTheme: InputDecorationTheme(
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(
@@ -68,9 +66,7 @@ class UsersSearch extends SearchDelegate {
 
   @override
   List<Widget>? buildActions(BuildContext context) {
-    return [
-
-    ];
+    return [];
   }
 
   @override
@@ -115,7 +111,8 @@ class UsersSearch extends SearchDelegate {
           child: InkWell(
             onTap: () {
               close(context, userModel);
-              Navigator.pushNamed(context , Routes.chatRoute , arguments: userModel);
+              Navigator.of(context).pushNamed(Routes.chatRoute,
+                  arguments: {'isGroup': false, 'model': userModel});
             },
             child: SizedBox(
               height: AppSize.s60,

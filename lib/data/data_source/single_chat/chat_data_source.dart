@@ -20,12 +20,10 @@ abstract class SingleChatDataSource {
 }
 
 class SingleChatDataSourceImpl implements SingleChatDataSource {
-
   final FirebaseFirestore _fireStore;
 
   SingleChatDataSourceImpl(this._fireStore);
 
-  
   @override
   Future<void> setChatFields(
       {required String firstUID,
@@ -50,6 +48,23 @@ class SingleChatDataSourceImpl implements SingleChatDataSource {
     String senderUser;
     String receiverUser;
 
+    if (chatRequest.senderUser == chatRequest.receiverUser) {
+      await setChatFields(
+          firstUID: chatRequest.senderUser!,
+          secondUID: chatRequest.receiverUser!,
+          chatRequest: chatRequest);
+
+      await _fireStore
+          .collection(USERS_COLLECTION_PATH)
+          .doc(chatRequest.senderUser!)
+          .collection(CHATS_COLLECTION_PATH)
+          .doc(chatRequest.receiverUser!)
+          .collection(MESSAGES_COLLECTION_PATH)
+          .add(chatRequest.messageRequest!.toMap());
+
+      return;
+    }
+
     for (int i = 0; i < 2; i++) {
       if (i == 0) {
         senderUser = chatRequest.senderUser!;
@@ -72,8 +87,7 @@ class SingleChatDataSourceImpl implements SingleChatDataSource {
           .add(chatRequest.messageRequest!.toMap());
     }
 
-    await setUnreadMessages(
-        chatRequest.receiverUser!, chatRequest.senderUser!);
+    await setUnreadMessages(chatRequest.receiverUser!, chatRequest.senderUser!);
   }
 
   @override
