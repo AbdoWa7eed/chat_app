@@ -99,13 +99,18 @@ showPicker(BuildContext context,
   );
 }
 
-Widget getUsersListWidget(ChatAppCubit cubit) {
+Widget getUsersListWidget(
+  ChatAppCubit cubit, {
+  required Function(bool?, int) onChanged,
+  required Map<int, bool> checkedUsers,
+}) {
   return Expanded(
     child: ListView.separated(
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
-          return _getUserItem(context, cubit.users[index], cubit, index);
+          return _getUserItem(context, cubit.users[index], index,
+              checkedUsers: checkedUsers, onChanged: onChanged);
         },
         separatorBuilder: (context, index) =>
             const SizedBox(height: AppSize.s6),
@@ -113,7 +118,13 @@ Widget getUsersListWidget(ChatAppCubit cubit) {
   );
 }
 
-Widget _getUserItem(context, UserModel user, ChatAppCubit cubit, int index) {
+Widget _getUserItem(
+  context,
+  UserModel user,
+  int index, {
+  required Function(bool?, int) onChanged,
+  required Map<int, bool> checkedUsers,
+}) {
   return Padding(
     padding: const EdgeInsets.symmetric(
         horizontal: AppPadding.p12, vertical: AppPadding.p8),
@@ -136,9 +147,9 @@ Widget _getUserItem(context, UserModel user, ChatAppCubit cubit, int index) {
           ),
         ),
         Checkbox(
-          value: cubit.checkedUsers[index] ?? false,
+          value: checkedUsers[index] ?? false,
           onChanged: (value) {
-            cubit.addCheckedStateToMap(index, value);
+            onChanged.call(value, index);
           },
         ),
       ],

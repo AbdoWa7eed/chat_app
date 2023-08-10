@@ -10,13 +10,12 @@ import 'package:chat_app/presentation/common/functions.dart';
 import 'package:chat_app/presentation/cubit/app_states.dart';
 import 'package:chat_app/presentation/resources/language_manger.dart';
 import 'package:chat_app/presentation/resources/strings_manager.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ChatAppCubit extends Cubit<ChatAppStates> {
   ChatAppCubit() : super(ChatAppInitialState());
   final HomeRepository _homeRepository = instance<HomeRepository>();
-  final AppPreferences _appPreferences = instance<AppPreferences>();
+  final AppPreferences appPreferences = instance<AppPreferences>();
   final NotificationRepo _notificationRepo = instance<NotificationRepo>();
   int tabBarIndex = 0;
   File? image;
@@ -24,7 +23,7 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
 
   Future<void> setAppLanguage() async {
     bool isUpdated = false;
-    if (await _appPreferences.getAppLanguage() ==
+    if (await appPreferences.getAppLanguage() ==
         LanguageType.ENGLISH.getValue()) {
       (await _homeRepository
               .setUserDeviceLanguage(LanguageType.ARABIC.getValue()))
@@ -39,7 +38,7 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
       });
     }
     if (isUpdated) {
-      await _appPreferences.changeAppLanguage();
+      await appPreferences.changeAppLanguage();
     }
   }
 
@@ -220,77 +219,6 @@ class ChatAppCubit extends Cubit<ChatAppStates> {
         groupMembers[element] = userModel!;
       }
     }
-  }
-
-  updateGroupInfo(
-    GroupChatModel groupModel, {
-    required String name,
-  }) async {
-    if (image != null) {
-      await _uploadImage();
-      groupModel.groupImage = _imageUrl!;
-    }
-    emit(UpdateGroupDataLoadingState());
-    groupModel.groupName = name;
-    (await _homeRepository.updateGroupData(groupModel)).fold((failure) {
-      emit(UpdateGroupDataErrorState(failure.message));
-    }, (success) {
-      if (image != null) {
-        image = null;
-      }
-      emit(UpdateGroupDataSuccessState());
-    });
-  }
-
-  addNewMembers(GroupChatModel groupModel) async {
-    Map<String, int> newMembers = {};
-    bool isExists = false;
-    checkedUsers.forEach((key, value) {
-      newMembers[users[key].uid] = 0;
-      groupMembers[users[key].uid] = users[key];
-      if (groupModel.groupMembers.containsKey(users[key].uid)) {
-        emit(UpdateGroupDataErrorState(AppStrings.userIsExists.tr()));
-        isExists = true;
-      }
-    });
-    if (isExists) {
-      return;
-    }
-
-    emit(UpdateGroupDataLoadingState());
-    groupModel.groupMembers.addAll(newMembers);
-    (await _homeRepository.updateGroupData(groupModel,
-            newUsersIDs: newMembers.keys.toList()))
-        .fold((failure) {
-      emit(UpdateGroupDataErrorState(failure.message));
-    }, (success) {
-      emit(UpdateGroupDataSuccessState());
-    });
-
-    if (state is UpdateUserDataSuccessState) {
-      checkedUsers.forEach((key, value) async {
-        await sendNewGroupNotification(
-            userModel: users[key], groupName: groupModel.groupName);
-      });
-      checkedUsers.clear();
-    }
-  }
-
-  exitGroup(GroupChatModel groupModel, {required Function onExit}) async {
-    groupModel.groupMembers.remove(appUserModel!.uid);
-    groups.remove(groupModel);
-    groupMembers.remove(appUserModel!.uid);
-    bool isLastUser = groupMembers.isEmpty;
-    (await _homeRepository.exitGroup(groupModel,
-            userID: appUserModel!.uid, isLastUser: isLastUser))
-        .fold((failure) {
-      emit(ExitGroupErrorState(failure.message));
-    }, (success) {
-      onExit();
-      groupMembers.clear();
-      setTabBarIndex(0);
-      emit(ExitGroupSuccessState());
-    });
   }
 
   Map<int, bool> checkedUsers = {};

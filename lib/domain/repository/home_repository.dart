@@ -22,12 +22,6 @@ abstract class HomeRepository {
 
   Future<Either<Failure, void>> updateUserData(UserModel userModel);
 
-  Future<Either<Failure, void>> updateGroupData(GroupChatModel groupModel,
-      {List<String>? newUsersIDs});
-
-  Future<Either<Failure, void>> exitGroup(GroupChatModel groupModel,
-      {required String userID, bool isLastUser = false});
-
   Future<Either<Failure, void>> setUserDeviceLanguage(String lang);
 
   Future<Either<Failure, void>> setDeviceToken(String token);

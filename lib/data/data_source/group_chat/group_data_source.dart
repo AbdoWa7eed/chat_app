@@ -72,7 +72,9 @@ class GroupChatDataSourceImpl implements GroupChatDataSource {
       });
     } else {
       group.groupMembers = Map.from(data);
-      group.groupMembers?.update(readerUser, (value) => Constants.zero);
+      if (group.groupMembers?.containsKey(readerUser) ?? false) {
+        group.groupMembers?.update(readerUser, (value) => Constants.zero);
+      }
     }
 
     await _fireStore.collection(GROUPS_COLLECTION_PATH).doc(group.uid).update({

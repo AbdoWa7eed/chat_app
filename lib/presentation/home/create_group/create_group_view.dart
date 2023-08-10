@@ -58,7 +58,13 @@ class _CreateGroupWidgetState extends State<CreateGroupWidget> {
                   AppStrings.selectMembers.tr(),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                getUsersListWidget(cubit),
+                getUsersListWidget(
+                  cubit,
+                  checkedUsers: cubit.checkedUsers,
+                  onChanged: (value, index) {
+                    cubit.addCheckedStateToMap(index, value);
+                  },
+                ),
                 SizedBox(
                   width: double.infinity,
                   height: AppSize.s40,

@@ -1,5 +1,5 @@
-import 'package:chat_app/app/app_preferences.dart';
 import 'package:chat_app/app/di.dart';
+import 'package:chat_app/presentation/common/loading_view.dart';
 import 'package:chat_app/presentation/cubit/app_cubit.dart';
 import 'package:chat_app/presentation/cubit/app_states.dart';
 import 'package:chat_app/presentation/home/create_group/create_group_view.dart';
@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:lottie/lottie.dart';
 import '../search_delegate/search_delegate.dart';
 
 class HomeView extends StatefulWidget {
@@ -128,7 +127,7 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
 
   Widget _getContentWidget(ChatAppCubit cubit) {
     if (cubit.state is ChatAppLoadingStates) {
-      return _getLoadingScreen();
+      return const LoadingScreen();
     } else {
       if (cubit.tabBarIndex == 0) {
         return Expanded(
@@ -175,28 +174,6 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
     );
   }
 
-  Widget _getLoadingScreen() {
-    return Expanded(
-      child: Container(
-        color: ColorManager.backgroundColor,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(JsonAssets.loading),
-              const SizedBox(
-                height: AppSize.s20,
-              ),
-              Text(AppStrings.loading.tr(),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   _onMenuItemSelected(MenuItem value) {
     var cubit = instance<ChatAppCubit>();
     if (value == MenuItems.createGroupItem) {
@@ -214,12 +191,13 @@ class _HomeViewState extends State<HomeView> with WidgetsBindingObserver {
   }
 
   _isTokenisValid() async {
+    var cubit = instance<ChatAppCubit>();
     var token = ModalRoute.of(context)?.settings.arguments as String?;
     if (token != null) {
-      var currentToken = instance<AppPreferences>().getDeviceToken();
+      var currentToken = cubit.appPreferences.getDeviceToken();
       if (token != currentToken) {
         await instance<ChatAppCubit>().setDeviceToken(token);
-        await instance<AppPreferences>().setDeviceToken(token);
+        await cubit.appPreferences.setDeviceToken(token);
       }
     }
   }

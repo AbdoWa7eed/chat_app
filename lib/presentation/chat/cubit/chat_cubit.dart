@@ -31,9 +31,10 @@ class InChatCubit extends Cubit<InChatStates> {
     }, (stream) async {
       stream.listen((event) {
         messages = [];
-        messages.addAll(event);
+        messages.addAll(event.toList());
         emit(GetMessagesSuccessState());
       });
+      await setUnreadMessages(model.uid);
       await getUserStatus(model.uid);
     });
   }
@@ -96,7 +97,6 @@ class InChatCubit extends Cubit<InChatStates> {
   }
 
   Future<void> getUserStatus(String uid) async {
-    emit(GetMessagesLoadingState());
     (await _singleChatRepo.getUserStatus(uid)).fold((failure) {
       emit(GetUserStatusErrorState(failure.message));
     }, (statusStream) {

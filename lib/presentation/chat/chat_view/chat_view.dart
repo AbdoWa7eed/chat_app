@@ -203,9 +203,7 @@ class _ChatViewState extends State<ChatView> {
         ..getGroupMessages(cubit.groupModel.uid)
         ..setGroupUnreadMessages(cubit.groupModel);
     } else {
-      return cubit
-        ..getMessages(cubit.userModel)
-        ..setUnreadMessages(cubit.userModel.uid);
+      return cubit..getMessages(cubit.userModel);
     }
   }
 

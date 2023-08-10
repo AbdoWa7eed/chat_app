@@ -54,7 +54,7 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (context) => const UserInfoView(), settings: settings);
       case Routes.groupInfoRoute:
-        initImagePickerInstance();
+        initGroupInfoModule();
         return MaterialPageRoute(
             builder: (context) => const GroupInfoView(), settings: settings);
       default:

@@ -135,38 +135,6 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateGroupData(GroupChatModel groupModel,
-      {List<String>? newUsersIDs}) async {
-    if (await _networkInfo.isConnected) {
-      try {
-        await _homeDataSource.updateGroupData(groupModel.toGroupChatRequest(),
-            newUsersIDs: newUsersIDs);
-        return const Right(Constants.zero);
-      } catch (error) {
-        return Left(Failure(AppStrings.anErrorOccurred.tr()));
-      }
-    } else {
-      return Left(Failure(AppStrings.connectionError.tr()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> exitGroup(GroupChatModel groupModel,
-      {required String userID, bool isLastUser = false}) async {
-    if (await _networkInfo.isConnected) {
-      try {
-        await _homeDataSource.exitGroup(groupModel.toGroupChatRequest(), userID,
-            isLastUser: isLastUser);
-        return const Right(Constants.zero);
-      } catch (error) {
-        return Left(Failure(AppStrings.anErrorOccurred.tr()));
-      }
-    } else {
-      return Left(Failure(AppStrings.connectionError.tr()));
-    }
-  }
-
-  @override
   Future<Either<Failure, void>> setDeviceToken(String token) async {
     if (await _networkInfo.isConnected) {
       try {

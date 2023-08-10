@@ -3,8 +3,8 @@ import 'package:chat_app/app/di.dart';
 import 'package:chat_app/app/functions.dart';
 import 'package:chat_app/domain/models/models.dart';
 import 'package:chat_app/presentation/common/widgets.dart';
-import 'package:chat_app/presentation/cubit/app_cubit.dart';
-import 'package:chat_app/presentation/cubit/app_states.dart';
+import 'package:chat_app/presentation/group_info/cubit/cubit.dart';
+import 'package:chat_app/presentation/group_info/cubit/states.dart';
 import 'package:chat_app/presentation/resources/assets_manager.dart';
 import 'package:chat_app/presentation/resources/color_manager.dart';
 import 'package:chat_app/presentation/resources/constants_manager.dart';
@@ -37,17 +37,20 @@ class _GroupInfoViewState extends State<GroupInfoView> {
   Widget build(BuildContext context) {
     _initModel();
 
-    return BlocConsumer<ChatAppCubit, ChatAppStates>(
-      listener: (context, state) {
-        _listenerStateValidation(state);
-      },
-      builder: (context, state) {
-        return _getContentWidget();
-      },
+    return BlocProvider<GroupInfoCubit>.value(
+      value: instance<GroupInfoCubit>(),
+      child: BlocConsumer<GroupInfoCubit, GroupInfoStates>(
+        listener: (context, state) {
+          _listenerStateValidation(state);
+        },
+        builder: (context, state) {
+          return _getContentWidget();
+        },
+      ),
     );
   }
 
-  _listenerStateValidation(ChatAppStates state) {
+  _listenerStateValidation(GroupInfoStates state) {
     if (state is UpdateGroupDataLoadingState ||
         state is UploadImageLoadingState) {
       dismissDialog(context);
@@ -78,7 +81,7 @@ class _GroupInfoViewState extends State<GroupInfoView> {
   }
 
   Widget _getContentWidget() {
-    var cubit = instance<ChatAppCubit>();
+    var cubit = instance<GroupInfoCubit>();
     return Scaffold(
       backgroundColor: ColorManager.backgroundColor,
       appBar: AppBar(
@@ -179,7 +182,7 @@ class _GroupInfoViewState extends State<GroupInfoView> {
                     _getMembersListWidget(cubit),
                     ListTile(
                       onTap: () {
-                        cubit.createUsersList();
+                        cubit.chatAppCubit.createUsersList();
                         showDialog(
                             context: context,
                             builder: (context) =>
@@ -214,8 +217,7 @@ class _GroupInfoViewState extends State<GroupInfoView> {
                       onTap: () {
                         cubit.exitGroup(_groupModel, onExit: () {
                           Navigator.pushNamedAndRemoveUntil(
-                              context, Routes.homeRoute, (route) => false,
-                              arguments: true);
+                              context, Routes.homeRoute, (route) => false);
                         });
                       },
                       iconColor: ColorManager.error,
@@ -236,7 +238,7 @@ class _GroupInfoViewState extends State<GroupInfoView> {
     );
   }
 
-  Widget _getMembersListWidget(ChatAppCubit cubit) {
+  Widget _getMembersListWidget(GroupInfoCubit cubit) {
     List groupMembers = cubit.groupMembers.values.toList();
     return ListView.separated(
         shrinkWrap: true,
@@ -280,40 +282,49 @@ class _GroupInfoViewState extends State<GroupInfoView> {
     );
   }
 
-  Widget _getAddMembersDialogWidget(ChatAppCubit cubit) {
-    return BlocConsumer<ChatAppCubit, ChatAppStates>(
-      listener: (context, state) {
-        _listenerStateValidation(state);
-      },
-      builder: (context, state) {
-        return Dialog(
-          backgroundColor: ColorManager.backgroundColor,
-          child: Padding(
-            padding: const EdgeInsets.all(AppPadding.p12),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              const SizedBox(
-                height: AppSize.s20,
-              ),
-              Text(
-                AppStrings.selectMembers.tr(),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              getUsersListWidget(cubit),
-              SizedBox(
-                width: double.infinity,
-                height: AppSize.s40,
-                child: ElevatedButton(
-                  onPressed: () {
-                    cubit.addNewMembers(_groupModel);
-                  },
-                  child: Text(AppStrings.addNewMembers.tr(),
-                      style: Theme.of(context).textTheme.bodySmall),
+  Widget _getAddMembersDialogWidget(GroupInfoCubit cubit) {
+    return BlocProvider<GroupInfoCubit>.value(
+      value: instance<GroupInfoCubit>(),
+      child: BlocConsumer<GroupInfoCubit, GroupInfoStates>(
+        listener: (context, state) {
+          _listenerStateValidation(state);
+        },
+        builder: (context, state) {
+          return Dialog(
+            backgroundColor: ColorManager.backgroundColor,
+            child: Padding(
+              padding: const EdgeInsets.all(AppPadding.p12),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                const SizedBox(
+                  height: AppSize.s20,
                 ),
-              ),
-            ]),
-          ),
-        );
-      },
+                Text(
+                  AppStrings.selectMembers.tr(),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                getUsersListWidget(
+                  cubit.chatAppCubit,
+                  checkedUsers: cubit.checkedUsers,
+                  onChanged: (value, index) {
+                    cubit.addCheckedStateToMap(index, value);
+                  },
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: AppSize.s40,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      cubit.addNewMembers(_groupModel);
+                    },
+                    child: Text(AppStrings.addNewMembers.tr(),
+                        style: Theme.of(context).textTheme.bodySmall),
+                  ),
+                ),
+              ]),
+            ),
+          );
+        },
+      ),
     );
   }
 }

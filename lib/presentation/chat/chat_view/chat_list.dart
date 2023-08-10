@@ -4,6 +4,7 @@ import 'package:chat_app/domain/models/models.dart';
 import 'package:chat_app/presentation/chat/cubit/chat_cubit.dart';
 import 'package:chat_app/presentation/chat/cubit/chat_states.dart';
 import 'package:chat_app/presentation/common/functions.dart';
+import 'package:chat_app/presentation/common/loading_view.dart';
 import 'package:chat_app/presentation/resources/assets_manager.dart';
 import 'package:chat_app/presentation/resources/color_manager.dart';
 import 'package:chat_app/presentation/resources/strings_manager.dart';
@@ -12,7 +13,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:lottie/lottie.dart';
 
 class ChatList extends StatefulWidget {
   final ScrollController scrollController;
@@ -35,12 +35,12 @@ class _ChatListState extends State<ChatList> {
   }
 
   Widget _getChatWidget(context, InChatCubit cubit) {
-    if (cubit.messages.isNotEmpty) {
-      return _getListOfMessages(cubit.messages, cubit);
-    } else if (cubit.state is GetMessagesLoadingState) {
-      return _getLoadingScreen(context);
-    } else {
+    if (cubit.state is GetMessagesLoadingState) {
+      return const LoadingScreen();
+    } else if (cubit.messages.isEmpty) {
       return _getEmptyScreenWidget(context);
+    } else{
+      return _getListOfMessages(cubit.messages, cubit);
     }
   }
 
@@ -173,28 +173,6 @@ class _ChatListState extends State<ChatList> {
             style: Theme.of(context).textTheme.labelSmall,
           )
         ],
-      ),
-    );
-  }
-
-  Widget _getLoadingScreen(context) {
-    return Expanded(
-      child: Container(
-        color: ColorManager.backgroundColor,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(JsonAssets.loading),
-              const SizedBox(
-                height: AppSize.s20,
-              ),
-              Text(AppStrings.loading.tr(),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium),
-            ],
-          ),
-        ),
       ),
     );
   }

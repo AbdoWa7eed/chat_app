@@ -140,10 +140,11 @@ class _TabBarScreensState extends State<TabBarScreens> {
       GroupChatModel groupModel, int index, ChatAppCubit cubit) {
     return InkWell(
       onTap: () {
-        cubit.getGroupMembers(groupModel).then((value) {
-          Navigator.of(context).pushNamed(Routes.chatRoute,
-              arguments: {'isGroup': true, 'model': groupModel});
-        });
+        cubit.getGroupMembers(
+          groupModel,
+        );
+        Navigator.of(context).pushNamed(Routes.chatRoute,
+            arguments: {'isGroup': true, 'model': groupModel});
       },
       child: SizedBox(
         height: AppSize.s60,

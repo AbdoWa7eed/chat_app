@@ -23,12 +23,6 @@ abstract class HomeDataSource {
 
   Future<void> updateUserData(UserRequest userRequest);
 
-  Future<void> updateGroupData(GroupChatRequest groupRequest,
-      {List<String>? newUsersIDs});
-
-  Future<void> exitGroup(GroupChatRequest groupRequest, String userID,
-      {bool isLastUser = false});
-
   Future<void> setUserDeviceLanguage(String lang);
 
   Future<void> setDeviceToken(String token);
@@ -158,46 +152,6 @@ class HomeDataSourceImpl implements HomeDataSource {
         .collection(USERS_COLLECTION_PATH)
         .doc(userRequest.uid)
         .update(userRequest.toMap());
-  }
-
-  @override
-  Future<void> updateGroupData(GroupChatRequest groupRequest,
-      {List<String>? newUsersIDs}) async {
-    await _fireStore
-        .collection(GROUPS_COLLECTION_PATH)
-        .doc(groupRequest.uid)
-        .update(groupRequest.toMap());
-
-    if (newUsersIDs != null) {
-      for (var element in newUsersIDs) {
-        await _addGroupToUserDoc(element, groupRequest.uid!);
-      }
-    }
-  }
-
-  @override
-  Future<void> exitGroup(GroupChatRequest groupRequest, String userID,
-      {bool isLastUser = false}) async {
-    if (isLastUser) {
-      await _fireStore
-          .collection(GROUPS_COLLECTION_PATH)
-          .doc(groupRequest.uid)
-          .delete();
-    } else {
-      await _fireStore
-          .collection(GROUPS_COLLECTION_PATH)
-          .doc(groupRequest.uid)
-          .update({
-        GROUP_MEMBERS_FIELD_PATH: groupRequest.groupMembers,
-      });
-    }
-
-    await _fireStore
-        .collection(USERS_COLLECTION_PATH)
-        .doc(userID)
-        .collection(MYGROUP_COLLECTION_PATH)
-        .doc(groupRequest.uid)
-        .delete();
   }
 
   @override

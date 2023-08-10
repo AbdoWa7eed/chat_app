@@ -2,6 +2,7 @@ import 'package:chat_app/app/app_preferences.dart';
 import 'package:chat_app/app/constants.dart';
 import 'package:chat_app/data/data_source/auth/auth_data_srouce.dart';
 import 'package:chat_app/data/data_source/group_chat/group_data_source.dart';
+import 'package:chat_app/data/data_source/group_info/group_info_data_source.dart';
 import 'package:chat_app/data/data_source/home/home_data_source.dart';
 import 'package:chat_app/data/data_source/notification/notification_data_source.dart';
 import 'package:chat_app/data/data_source/register/register_data_source.dart';
@@ -9,18 +10,21 @@ import 'package:chat_app/data/data_source/single_chat/chat_data_source.dart';
 import 'package:chat_app/data/network/app_api.dart';
 import 'package:chat_app/data/network/network_info.dart';
 import 'package:chat_app/data/repository/auth_repository_impl.dart';
+import 'package:chat_app/data/repository/group_info_repo_impl.dart';
 import 'package:chat_app/data/repository/group_repo_impl.dart';
 import 'package:chat_app/data/repository/home_repo_impl.dart';
 import 'package:chat_app/data/repository/notification_repo_impl.dart';
 import 'package:chat_app/data/repository/register_repo_impl.dart';
 import 'package:chat_app/data/repository/single_chat_repo_impl.dart';
 import 'package:chat_app/domain/repository/group_chat_repo.dart';
+import 'package:chat_app/domain/repository/group_info_repo.dart';
 import 'package:chat_app/domain/repository/home_repository.dart';
 import 'package:chat_app/domain/repository/notification_repo.dart';
 import 'package:chat_app/domain/repository/register_repo.dart';
 import 'package:chat_app/domain/repository/single_chat_repo.dart';
 import 'package:chat_app/presentation/chat/cubit/chat_cubit.dart';
 import 'package:chat_app/presentation/cubit/app_cubit.dart';
+import 'package:chat_app/presentation/group_info/cubit/cubit.dart';
 import 'package:chat_app/presentation/phone_auth/cubit/cubit.dart';
 import 'package:chat_app/presentation/register/cubit/cubit.dart';
 import 'package:chat_app/presentation/resources/strings_manager.dart';
@@ -141,4 +145,19 @@ initChatModule() async {
   if (!GetIt.I.isRegistered<InChatCubit>()) {
     instance.registerLazySingleton<InChatCubit>(() => InChatCubit());
   }
+}
+
+initGroupInfoModule() async {
+  await initImagePickerInstance();
+  if (!GetIt.I.isRegistered<GroupInfoDataSource>()) {
+    instance.registerLazySingleton<GroupInfoDataSource>(() =>
+        GroupInfoDataSourceImpl(
+            instance<FirebaseFirestore>(), instance<FirebaseStorage>()));
+    instance.registerLazySingleton<GroupInfoRepo>(() => GroupInfoRepoImpl(
+        instance<NetworkInfo>(), instance<GroupInfoDataSource>()));
+  }
+  if (!GetIt.I.isRegistered<GroupInfoCubit>()) {
+    instance.registerLazySingleton<GroupInfoCubit>(() => GroupInfoCubit());
+  }
+  instance<GroupInfoCubit>().initGroupMembers();
 }
