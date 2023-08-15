@@ -70,7 +70,7 @@ Widget appBarLeading({required Function() onPressed}) {
   );
 }
 
-showPicker(BuildContext context,
+void showPicker(BuildContext context,
     {required Function() onCameraTapped, required Function() onGalleryTapped}) {
   showModalBottomSheet(
     context: context,
@@ -84,13 +84,19 @@ showPicker(BuildContext context,
               trailing: const Icon(Icons.arrow_forward_ios, size: AppSize.s18),
               leading: const Icon(Icons.camera),
               title: const Text(AppStrings.fromGallery).tr(),
-              onTap: onGalleryTapped,
+              onTap: () {
+                Navigator.of(context).pop();
+                onGalleryTapped.call();
+              },
             ),
             ListTile(
               trailing: const Icon(Icons.arrow_forward_ios, size: AppSize.s18),
               leading: const Icon(Icons.camera_alt_outlined),
               title: const Text(AppStrings.fromCamera).tr(),
-              onTap: onCameraTapped,
+              onTap: () {
+                Navigator.of(context).pop();
+                onCameraTapped.call();
+              },
             ),
           ],
         ),

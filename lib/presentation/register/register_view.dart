@@ -215,6 +215,7 @@ class RegisterView extends StatelessWidget {
 
   _listenerStateValidation(BuildContext context, RegisterStates state) {
     if (state is AddUserLoadingState) {
+      dismissDialog(context);
       showDialog(
         barrierDismissible: false,
         context: context,

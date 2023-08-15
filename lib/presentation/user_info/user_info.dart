@@ -58,6 +58,7 @@ class _UserInfoViewState extends State<UserInfoView> {
   _listenerStateValidation(ChatAppStates state) {
     if (state is UpdateUserDataLoadingState ||
         state is UploadImageLoadingState) {
+      dismissDialog(context);
       showDialog(
         context: context,
         builder: (context) => getDialogWidget(context,
