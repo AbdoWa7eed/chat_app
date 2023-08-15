@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:chat_app/app/constants.dart';
+import 'package:chat_app/data/data_source/upload_image/upload_image.dart';
 import 'package:chat_app/data/network/requests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import '../firebase_constants.dart';
 
 abstract class HomeDataSource {
@@ -31,10 +31,10 @@ abstract class HomeDataSource {
 }
 
 class HomeDataSourceImpl implements HomeDataSource {
-  final FirebaseStorage _fireStorage;
+  final UploadImageDataSource _uploadImageDataSource;
   final FirebaseFirestore _fireStore;
 
-  HomeDataSourceImpl(this._fireStorage, this._fireStore);
+  HomeDataSourceImpl(this._uploadImageDataSource, this._fireStore);
 
   @override
   Future<UserRequest?> getUserData(username) async {
@@ -170,10 +170,6 @@ class HomeDataSourceImpl implements HomeDataSource {
 
   @override
   Future<String> uploadImage(File image) async {
-    final store = _fireStorage
-        .ref()
-        .child("$IMAGES_FOLDER_PATH${image.path.split('/').last}");
-    final snapshot = await store.putFile(image);
-    return await snapshot.ref.getDownloadURL();
+    return await _uploadImageDataSource.uploadImage(image);
   }
 }

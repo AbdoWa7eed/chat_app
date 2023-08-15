@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:chat_app/data/data_source/firebase_constants.dart';
+import 'package:chat_app/data/data_source/upload_image/upload_image.dart';
 import 'package:chat_app/data/network/requests.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 abstract class RegisterDataSource {
   Future<bool> addUserToFireStore(UserRequest user);
@@ -12,10 +12,10 @@ abstract class RegisterDataSource {
 }
 
 class RegisterDataSourceImpl implements RegisterDataSource {
-  final FirebaseStorage _fireStorage;
   final FirebaseFirestore _fireStore;
+  final UploadImageDataSource _uploadImageDataSource;
 
-  RegisterDataSourceImpl(this._fireStorage, this._fireStore);
+  RegisterDataSourceImpl(this._uploadImageDataSource, this._fireStore);
   @override
   Future<bool> addUserToFireStore(UserRequest user) async {
     bool isUsernameExists = false;
@@ -38,10 +38,6 @@ class RegisterDataSourceImpl implements RegisterDataSource {
 
   @override
   Future<String> uploadImage(File image) async {
-    final store = _fireStorage
-        .ref()
-        .child("$IMAGES_FOLDER_PATH${image.path.split('/').last}");
-    final snapshot = await store.putFile(image);
-    return await snapshot.ref.getDownloadURL();
+    return await _uploadImageDataSource.uploadImage(image);
   }
 }

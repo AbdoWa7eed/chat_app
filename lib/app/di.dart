@@ -7,6 +7,7 @@ import 'package:chat_app/data/data_source/home/home_data_source.dart';
 import 'package:chat_app/data/data_source/notification/notification_data_source.dart';
 import 'package:chat_app/data/data_source/register/register_data_source.dart';
 import 'package:chat_app/data/data_source/single_chat/chat_data_source.dart';
+import 'package:chat_app/data/data_source/upload_image/upload_image.dart';
 import 'package:chat_app/data/network/app_api.dart';
 import 'package:chat_app/data/network/network_info.dart';
 import 'package:chat_app/data/repository/auth_repository_impl.dart';
@@ -63,6 +64,9 @@ initAppModule() async {
     () => FirebaseMessaging.instance,
   );
 
+  instance.registerLazySingleton<UploadImageDataSource>(
+      () => UploadImageDataSourceImpl(instance<FirebaseStorage>()));
+
   instance.registerLazySingleton<NotificationSender>(
       () => NotificationSenderImpl());
 
@@ -97,7 +101,7 @@ initImagePickerInstance() {
 initHomeModule() async {
   if (!GetIt.I.isRegistered<HomeDataSource>()) {
     instance.registerLazySingleton<HomeDataSource>(() => HomeDataSourceImpl(
-        instance<FirebaseStorage>(), instance<FirebaseFirestore>()));
+        instance<UploadImageDataSource>(), instance<FirebaseFirestore>()));
     instance.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl(
         instance<NetworkInfo>(), instance<HomeDataSource>()));
   }
@@ -116,7 +120,7 @@ initRegisterModule() async {
   if (!GetIt.I.isRegistered<RegisterDataSource>()) {
     instance.registerLazySingleton<RegisterDataSource>(() =>
         RegisterDataSourceImpl(
-            instance<FirebaseStorage>(), instance<FirebaseFirestore>()));
+            instance<UploadImageDataSource>(), instance<FirebaseFirestore>()));
     instance.registerLazySingleton<RegisterRepository>(() => RegisterRepoImpl(
         instance<NetworkInfo>(), instance<RegisterDataSource>()));
   }
@@ -152,7 +156,7 @@ initGroupInfoModule() async {
   if (!GetIt.I.isRegistered<GroupInfoDataSource>()) {
     instance.registerLazySingleton<GroupInfoDataSource>(() =>
         GroupInfoDataSourceImpl(
-            instance<FirebaseFirestore>(), instance<FirebaseStorage>()));
+            instance<FirebaseFirestore>(), instance<UploadImageDataSource>()));
     instance.registerLazySingleton<GroupInfoRepo>(() => GroupInfoRepoImpl(
         instance<NetworkInfo>(), instance<GroupInfoDataSource>()));
   }
