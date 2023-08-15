@@ -87,7 +87,7 @@ initPhoneAuthModule() {
     instance.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
         instance<AuthDataSource>(), instance<NetworkInfo>()));
   }
-  if (!GetIt.I.isRegistered<PhoneAuthCubit>() && UID == null) {
+  if (!GetIt.I.isRegistered<PhoneAuthCubit>()) {
     instance.registerLazySingleton<PhoneAuthCubit>(() => PhoneAuthCubit());
   }
 }
